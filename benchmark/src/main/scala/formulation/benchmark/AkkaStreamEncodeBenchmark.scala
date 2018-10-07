@@ -51,7 +51,7 @@ class AkkaStreamEncodeBenchmark extends BenchSuite {
   @Benchmark
   override def benchFormulation(): Unit = {
     def prg = Source(List.fill(size)(UserV1(1, "Mark", "mark@vectos.net", "so-secret")))
-      .via(encoder[UserV1])
+      .via(encoder[UserV1]())
       .runWith(Sink.ignore)
 
     Await.result(prg, Duration.Inf)

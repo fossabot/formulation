@@ -19,7 +19,7 @@ class AkkaStreamSpec extends WordSpec with GeneratorDrivenPropertyChecks with Ma
     "encode and decode symmterically" in {
       forAll { (progress: List[UserV1]) =>
         Source(progress)
-          .via(encoder[UserV1])
+          .via(encoder[UserV1](true))
           .via(decoder[UserV1])
           .runWith(TestSink.probe(system))
           .request(progress.size.toLong)

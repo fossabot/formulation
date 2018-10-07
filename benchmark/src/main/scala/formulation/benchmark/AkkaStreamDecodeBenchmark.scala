@@ -1,12 +1,12 @@
 package formulation.benchmark
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
+import java.io.ByteArrayInputStream
 import java.util.concurrent.TimeUnit
 
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Sink, Source}
 import akka.stream.{ActorMaterializer, Materializer}
-import com.sksamuel.avro4s.{AvroInputStream, AvroOutputStream}
+import com.sksamuel.avro4s.AvroInputStream
 import formulation.akkastreams._
 import io.circe.generic.auto._
 import io.circe.syntax._

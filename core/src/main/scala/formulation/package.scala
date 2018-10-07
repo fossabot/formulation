@@ -35,14 +35,14 @@ package object formulation extends AvroDsl {
     * @tparam A The type of the value to encode
     * @return A `AvroEncodeResult` which also contains the used `Schema`, useful when want to store it for example.
     */
-  def kleisliEncode[F[_], A](implicit F: Applicative[F], R: AvroEncoder[A], S: AvroSchema[A]): Kleisli[F, AvroEncodeContext[A], AvroEncodeContext[AvroEncodeResult]] =
+  def kleisliEncode[F[_], A](dropUnionSchema: Boolean = false)(implicit F: Applicative[F], R: AvroEncoder[A], S: AvroSchema[A]): Kleisli[F, AvroEncodeContext[A], AvroEncodeContext[AvroEncodeResult]] =
     Kleisli { ctx =>
       val os = new ByteArrayOutputStream()
 
       try {
         val schema = S.schema
         val (usedSchema, record: GenericRecord) = R.encode(schema, ctx.entity)
-        val dataWriter = new GenericDatumWriter[GenericRecord](usedSchema)
+        val dataWriter = new GenericDatumWriter[GenericRecord](if(dropUnionSchema) usedSchema else schema)
         val encoder = EncoderFactory.get().directBinaryEncoder(os, ctx.binaryEncoder.orNull)
 
         dataWriter.write(record, encoder)
@@ -65,8 +65,8 @@ package object formulation extends AvroDsl {
     * @tparam A The type of the value to encode
     * @return A array of bytes
     */
-  def encode[A](value: A)(implicit R: AvroEncoder[A], S: AvroSchema[A]): Array[Byte] =
-    kleisliEncode[Id, A].run(AvroEncodeContext(value, None)).entity.payload
+  def encode[A](value: A, dropUnionSchema: Boolean = false)(implicit R: AvroEncoder[A], S: AvroSchema[A]): Array[Byte] =
+    kleisliEncode[Id, A](dropUnionSchema).run(AvroEncodeContext(value, None)).entity.payload
 
 
   /**
@@ -115,7 +115,8 @@ package object formulation extends AvroDsl {
 
       }
       catch {
-        case NonFatal(ex) => F.pure(AvroDecodeContext(Left(AvroDecodeFailure.Exception(ex)), ctx.binaryDecoder))
+        case NonFatal(ex) =>
+          F.pure(AvroDecodeContext(Left(AvroDecodeFailure.Exception(ex)), ctx.binaryDecoder))
       }
       finally {
         in.close()

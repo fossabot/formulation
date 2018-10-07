@@ -17,7 +17,7 @@ import io.circe.syntax._
 @OutputTimeUnit(TimeUnit.SECONDS)
 class SingleEncodeBenchmark extends BenchSuite {
   def user = UserV1(1, "Mark", "mark@vectos.net", "so-secret")
-  val userEncoder = formulation.kleisliEncode[Id, UserV1]
+  val userEncoder = formulation.kleisliEncode[Id, UserV1]()
 
   @Benchmark
   def benchAvro4s(): Unit = {

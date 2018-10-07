@@ -1,20 +1,21 @@
 import microsites.ExtraMdFileConfig
 
-
-val core = project.in(file("core"))
+val core = project
+  .in(file("core"))
   .settings(commonSettings("core"))
   .settings(publishSettings)
   .settings(
     libraryDependencies ++= Seq(
-      "org.typelevel" %% "cats-core" % "1.5.0",
-      "org.apache.avro" % "avro" % "1.8.2",
-      "com.chuusai" %% "shapeless" % "2.3.3"
+      "org.typelevel"   %% "cats-core" % "1.5.0",
+      "org.apache.avro" % "avro"       % "1.8.2",
+      "com.chuusai"     %% "shapeless" % "2.3.3"
     ),
     coverageExcludedPackages := "formulation.*RecordN",
     sourceGenerators in Compile += (sourceManaged in Compile).map(Boilerplate.gen).taskValue
   )
 
-val refined = project.in(file("refined"))
+val refined = project
+  .in(file("refined"))
   .settings(commonSettings("refined"))
   .settings(publishSettings)
   .settings(
@@ -24,23 +25,26 @@ val refined = project.in(file("refined"))
   )
   .dependsOn(core)
 
-val schemaRegistry = project.in(file("schema-registry"))
+val schemaRegistry = project
+  .in(file("schema-registry"))
   .settings(commonSettings("schema-registry"))
   .settings(publishSettings)
   .dependsOn(core)
 
-val schemaRegistryConfluentSttp = project.in(file("schema-registry-confluent-sttp"))
+val schemaRegistryConfluentSttp = project
+  .in(file("schema-registry-confluent-sttp"))
   .settings(commonSettings("schema-registry-confluent-sttp"))
   .settings(publishSettings)
   .settings(
     libraryDependencies ++= Seq(
-      "com.softwaremill.sttp" %% "core" % "1.5.0",
-      "org.spire-math" %% "jawn-ast" % "0.13.0"
+      "com.softwaremill.sttp" %% "core"     % "1.5.0",
+      "org.spire-math"        %% "jawn-ast" % "0.13.0"
     )
   )
   .dependsOn(schemaRegistry)
 
-val schemaRegistryScalacache = project.in(file("schema-registry-scalacache"))
+val schemaRegistryScalacache = project
+  .in(file("schema-registry-scalacache"))
   .settings(commonSettings("schema-registry-scalacache"))
   .settings(publishSettings)
   .settings(
@@ -50,7 +54,8 @@ val schemaRegistryScalacache = project.in(file("schema-registry-scalacache"))
   )
   .dependsOn(schemaRegistry)
 
-val akkaStreams = project.in(file("akka-streams"))
+val akkaStreams = project
+  .in(file("akka-streams"))
   .settings(commonSettings("akka-streams"))
   .settings(publishSettings)
   .settings(
@@ -60,7 +65,8 @@ val akkaStreams = project.in(file("akka-streams"))
   )
   .dependsOn(core)
 
-val akkaSerializer = project.in(file("akka-serializer"))
+val akkaSerializer = project
+  .in(file("akka-serializer"))
   .settings(commonSettings("akka-serializer"))
   .settings(publishSettings)
   .settings(
@@ -70,36 +76,58 @@ val akkaSerializer = project.in(file("akka-serializer"))
   )
   .dependsOn(core, schemaRegistry)
 
+val rpc = project
+  .in(file("rpc"))
+  .settings(commonSettings("rpc"))
+  .settings(publishSettings)
+  .settings(
+    libraryDependencies ++= Seq(
+      "org.scodec"        %% "scodec-core"             % "1.10.3",
+      "org.scodec"        %% "scodec-stream"           % "1.2.0",
+      "co.fs2"            %% "fs2-core"                % "1.0.0",
+      "co.fs2"            %% "fs2-io"                  % "1.0.0",
+      "io.chrisdavenport" %% "log4cats-core"           % "0.1.1",
+      "io.chrisdavenport" %% "log4cats-slf4j"          % "0.1.1",
+      "io.prometheus"     % "simpleclient"             % "0.5.0",
+      "io.prometheus"     % "simpleclient_pushgateway" % "0.5.0",
+      "io.prometheus"     % "simpleclient_hotspot"     % "0.5.0",
+      "ch.qos.logback"    % "logback-classic"          % "1.2.3"
+    )
+  )
+  .dependsOn(core)
 
-val tests = project.in(file("tests"))
+val tests = project
+  .in(file("tests"))
   .settings(noPublishSettings)
   .settings(commonSettings("tests"))
   .settings(
     libraryDependencies ++= Seq(
-      "org.scalacheck" %% "scalacheck" % "1.13.5" % Test,
-      "org.scalatest" %% "scalatest" % "3.0.4" % Test,
+      "org.scalacheck"    %% "scalacheck"          % "1.13.5" % Test,
+      "org.scalatest"     %% "scalatest"           % "3.0.4"  % Test,
       "com.typesafe.akka" %% "akka-stream-testkit" % "2.5.18" % Test,
-      "com.github.cb372" %% "scalacache-caffeine" % "0.26.0" % Test
+      "com.github.cb372"  %% "scalacache-caffeine" % "0.26.0" % Test
     )
   )
-  .dependsOn(core, refined, schemaRegistry, schemaRegistryConfluentSttp, schemaRegistryScalacache, akkaStreams, akkaSerializer)
+  .dependsOn(core, refined, schemaRegistry, schemaRegistryConfluentSttp, schemaRegistryScalacache, akkaStreams, akkaSerializer, rpc)
 
-val benchmark = project.in(file("benchmark"))
+val benchmark = project
+  .in(file("benchmark"))
   .settings(noPublishSettings)
   .settings(commonSettings("benchmark"))
   .settings(
     coverageExcludedPackages := "formulation.*",
     libraryDependencies ++= Seq(
-      "io.circe" %% "circe-core" % "0.9.0",
-      "io.circe" %% "circe-generic" % "0.9.0",
-      "io.circe" %% "circe-parser" % "0.9.0",
-      "com.sksamuel.avro4s" %% "avro4s-core" % "1.8.0"
+      "io.circe"            %% "circe-core"    % "0.9.0",
+      "io.circe"            %% "circe-generic" % "0.9.0",
+      "io.circe"            %% "circe-parser"  % "0.9.0",
+      "com.sksamuel.avro4s" %% "avro4s-core"   % "1.8.0"
     )
   )
   .dependsOn(core, akkaStreams, schemaRegistry, akkaSerializer)
   .enablePlugins(JmhPlugin)
 
-val docs = project.in(file("docs"))
+val docs = project
+  .in(file("docs"))
   .settings(noPublishSettings)
   .settings(commonSettings("docs"))
   .settings(
@@ -128,7 +156,6 @@ val docs = project.in(file("docs"))
   )
   .dependsOn(core, refined, schemaRegistry, schemaRegistryConfluentSttp, schemaRegistryScalacache, akkaStreams, akkaSerializer)
   .enablePlugins(MicrositesPlugin)
-
 
 lazy val noPublishSettings = Seq(
   publish := {},
@@ -165,15 +192,15 @@ lazy val publishSettings = Seq(
   pgpSecretRing := file("./travis/local.secring.asc")
 )
 
-
 def scalacOpts(ver: String) = CrossVersion.partialVersion(ver) match {
   case Some((2, scalaMajor)) if scalaMajor == 12 => scalacOptions212
   case Some((2, scalaMajor)) if scalaMajor == 11 => scalacOptions211
-  case _ => Seq.empty
+  case _                                         => Seq.empty
 }
 
 val scalacOptions211 = Seq(
-  "-encoding", "UTF-8", // yes, this is 2 args
+  "-encoding",
+  "UTF-8", // yes, this is 2 args
   "-feature",
   "-language:existentials",
   "-language:higherKinds",
@@ -189,7 +216,8 @@ val scalacOptions211 = Seq(
 )
 
 val scalacOptions212 = Seq(
-  "-encoding", "utf-8", // Specify character encoding used by source files.
+  "-encoding",
+  "utf-8", // Specify character encoding used by source files.
   "-explaintypes", // Explain type errors in more detail.
   "-feature", // Emit warning and location for usages of features that should be imported explicitly.
   "-language:existentials", // Existential types (besides wildcard types) can be written and inferred
@@ -232,6 +260,7 @@ val scalacOptions212 = Seq(
   "-Ywarn-unused:privates" // Warn if a private member is unused.
 )
 
-val root = project.in(file("."))
+val root = project
+  .in(file("."))
   .settings(commonSettings("root") ++ noPublishSettings)
-  .aggregate(core, refined, schemaRegistry, schemaRegistryConfluentSttp, schemaRegistryScalacache, akkaStreams, akkaSerializer)
+  .aggregate(core, refined, schemaRegistry, schemaRegistryConfluentSttp, schemaRegistryScalacache, akkaStreams, akkaSerializer, rpc)

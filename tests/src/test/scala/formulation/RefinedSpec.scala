@@ -1,7 +1,6 @@
 package formulation
 
 import eu.timepit.refined._
-import eu.timepit.refined.collection._
 import org.scalatest.{Inside, Matchers, WordSpec}
 
 class RefinedSpec extends WordSpec with Matchers with Inside {

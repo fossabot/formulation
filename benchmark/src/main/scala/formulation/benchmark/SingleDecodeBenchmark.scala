@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit
 
 import cats.Id
 import com.sksamuel.avro4s.AvroInputStream
-import formulation.{AvroDecodeContext, AvroEncodeContext}
+import formulation.AvroDecodeContext
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.openjdk.jmh.annotations._

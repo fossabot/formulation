@@ -9,6 +9,7 @@ import shapeless.ops.coproduct.Align
 import shapeless.{Coproduct, Generic}
 
 import scala.util.Try
+import scala.util.control.NoStackTrace
 
 final case class Member[F[_], A, B] private (
     typeClass: F[A],
@@ -65,12 +66,12 @@ object AvroDecodeSkipReason {
   final case class NotMemberOfUnion(writerSchema: Schema, readerSchema: Schema) extends AvroDecodeSkipReason
 }
 
-sealed trait AvroDecodeFailure
+sealed abstract class AvroDecodeFailure(message: String, cause: Throwable) extends Throwable(message, cause)
 
 object AvroDecodeFailure {
-  final case class Errors(record: GenericRecord, errors: List[AvroDecodeError]) extends AvroDecodeFailure
-  final case class Exception(throwable: Throwable) extends AvroDecodeFailure
-  final case class Skip(reason: AvroDecodeSkipReason) extends AvroDecodeFailure
+  final case class Errors(record: GenericRecord, errors: List[AvroDecodeError]) extends AvroDecodeFailure(s"Failed to decode record ($errors)", null)
+  final case class Exception(throwable: Throwable) extends AvroDecodeFailure("Exception occured while decoding", throwable)
+  final case class Skip(reason: AvroDecodeSkipReason) extends AvroDecodeFailure(s"Skipped this record due: $reason", null)
 }
 
 sealed trait Attempt[+A] { self =>

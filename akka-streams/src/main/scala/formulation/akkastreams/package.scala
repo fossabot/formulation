@@ -19,8 +19,8 @@ package object akkastreams {
     * @tparam I The input type
     * @return A Flow which translate `I` to `Array[Byte]`
     */
-  def encoder[I : AvroSchema : AvroEncoder](implicit ec: ExecutionContext): Flow[I, Array[Byte], NotUsed] =
-    kleisliEncode(formulation.kleisliEncode[Future, I])
+  def encoder[I : AvroSchema : AvroEncoder](dropUnionSchema: Boolean = false)(implicit ec: ExecutionContext): Flow[I, Array[Byte], NotUsed] =
+    kleisliEncode(formulation.kleisliEncode[Future, I](dropUnionSchema))
 
   /**
     * A `Flow` which translate a `Array[Byte]` which has a `AvroSchema` and `AvroDecoder` to a `O`
