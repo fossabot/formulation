@@ -1,0 +1,11 @@
+name: formulation
+baseurl: /formulation
+description: Describe Avro data types
+highlighter: rouge
+docs: true
+collections:
+  tut:
+    output: true
+version: 0.4.3
+org: net.vectos
+markdown: kramdown
