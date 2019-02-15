@@ -1,0 +1,35 @@
+.jumbotron {
+  background: url("../img/jumbotron_pattern.png");
+}
+
+.jumbotron h1 {
+    font-family: 'Do Hyeon';
+    text-transform: uppercase;
+}
+
+section h1 {
+    font-family: 'Do Hyeon';
+    text-transform: uppercase;
+}
+
+section h2 {
+    font-family: 'Do Hyeon';
+    text-transform: uppercase;
+}
+
+section h3 {
+    font-family: 'Do Hyeon';
+    text-transform: uppercase;
+}
+
+section h4 {
+    font-family: 'Do Hyeon';
+    text-transform: uppercase;
+
+}
+
+#site-header .navbar-wrapper .brand .icon-wrapper span,
+.sidebar-nav > .sidebar-brand a .brand-wrapper span {
+    font-family: 'Do Hyeon';
+    text-transform: uppercase;
+}
